@@ -1,0 +1,55 @@
+name: Print Context Examples
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  print-context-info:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Print GitHub Context
+        run: |
+          echo "🔹 GitHub Context 🔹"
+          echo "${{ toJson(github) }}"
+
+      - name: Print Runner Context
+        run: |
+          echo "🏃 Runner Context 🏃"
+          echo "${{ toJson(runner) }}"
+
+      - name: Print Job Context
+        run: |
+          echo "🛠️ Job Context 🛠️"
+          echo "${{ toJson(job) }}"
+
+      - name: Print Strategy Context
+        run: |
+          echo "🔀 Strategy Context 🔀"
+          echo "${{ toJson(strategy) }}"
+
+      - name: Print Matrix Context
+        run: |
+          echo "📊 Matrix Context 📊"
+          echo "${{ toJson(matrix) }}"
+
+      - name: Print Steps Context
+        run: |
+          echo "🚶 Steps Context 🚶"
+          echo "${{ toJson(steps) }}"
+
+      - name: Print Environment Variables
+        run: |
+          echo "🌎 Environment Variables 🌎"
+          printenv
+
+      - name: Print Event Context
+        run: |
+          echo "📢 Event Context 📢"
+          cat $GITHUB_EVENT_PATH
+
