@@ -1,0 +1,50 @@
+name: Context-Driven Conditional Actions
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  conditional-echo:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Echo if on Main Branch
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo "✅ You are on the main branch. Ready for deployment!"
+
+      - name: Echo if Pull Request
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "📣 Pull request detected!"
+          echo "PR number: ${{ github.event.pull_request.number }}"
+          echo "PR title: ${{ github.event.pull_request.title }}"
+
+      - name: Echo if Commit Message Contains '[deploy]'
+        if: contains(github.event.head_commit.message, '[deploy]')
+        run: |
+          echo "🚀 Deployment tag '[deploy]' detected in commit message."
+          echo "Commit message: ${{ github.event.head_commit.message }}"
+
+      - name: Echo only if actor is repository owner
+        if: github.actor == github.repository_owner
+        run: |
+          echo "👤 Workflow triggered by repository owner: ${{ github.actor }}."
+
+      - name: Echo when Workflow is manually triggered
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "🖱️ Workflow manually triggered by: ${{ github.actor }}."
+
+      - name: Final Step Always Executed
+        if: always()
+        run: |
+          echo "✅ Workflow has completed its conditional checks."
