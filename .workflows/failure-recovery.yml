@@ -1,0 +1,32 @@
+name: Failure and Recovery
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  run-and-recover:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Intentionally Fail
+        id: failing-step
+        run: |
+          echo "This step is going to fail intentionally."
+          exit 1
+
+      - name: Recovery Step
+        if: failure() && steps.failing-step.outcome == 'failure'
+        run: |
+          echo "🚑 A failure was detected. Executing recovery..."
+          # Add your recovery commands here (e.g., cleanup, rollback, notification).
+          echo "Recovery actions completed."
+
+      - name: Post-Recovery Step
+        if: always()
+        run: |
+          echo "✅ Workflow completed with or without recovery."
